@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #00897b;
+      --primary-light: #4db6ac;
+      --secondary-color: #00bcd4;
+      --background-color: #f0f4f8;
+      --card-background: #ffffff;
+      --text-color: #37474f;
+      --light-text: #90a4ae;
+      --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
+      --border-color: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 30px 20px;
+      margin: 0;
+      color: var(--text-color);
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .container,
+    .form-container,
+    .view-container {
+      background: var(--card-background);
+      box-shadow: var(--shadow-light);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .container {
+      width: 320px;
+    }
+
+    .header {
+      padding: 15px 20px;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: white;
+      background: var(--primary-color);
+      border-bottom: none;
+      text-align: center;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--card-background);
+    }
+
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      background: var(--background-color);
+      flex: 1;
+      padding: 8px 15px;
+      border-radius: 25px;
+      border: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    .search-input-box:focus-within {
+      border-color: var(--primary-light);
+    }
+
+    .search-input-box i {
+      color: var(--primary-light);
+      margin-right: 8px;
+    }
+
+    .search-input-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text-color);
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0 10px;
+      max-height: 450px;
+      overflow-y: auto;
+    }
+
+    ul li {
+      display: flex;
+      align-items: center;
+      padding: 12px 10px;
+      border-bottom: 1px solid #f4f4f4;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    ul li:last-child {
+      border-bottom: none;
+    }
+
+    ul li:hover {
+      background: var(--background-color);
+      transform: translateY(-1px);
+    }
+
+    ul li img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+      border: 2px solid var(--primary-light);
+    }
+
+    .no-result {
+      text-align: center;
+      color: var(--light-text);
+      font-style: italic;
+      padding: 20px;
+    }
+
+    #addBtn {
+      position: sticky;
+      bottom: 15px;
+      right: 15px;
+      width: 50px;
+      height: 50px;
+      background: var(--primary-color);
+      border: none;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 137, 123, 0.4);
+      margin: 15px;
+      float: right;
+      transition: background 0.3s, transform 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #addBtn:hover {
+      background: var(--primary-light);
+      transform: scale(1.05);
+    }
+
+    .form-container {
+      padding: 30px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .profile {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .profile img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border: 4px solid var(--primary-light);
+      box-shadow: var(--shadow-soft);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-label {
+      background: var(--primary-light);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 137, 123, 0.3);
+    }
+
+    .upload-label:hover {
+      background: var(--primary-color);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: var(--background-color);
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      border: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .input-group:focus-within {
+      border-color: var(--primary-color);
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.1);
+    }
+
+    .input-group i {
+      color: var(--primary-color);
+      margin-right: 12px;
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .input-group input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      padding: 5px 0;
+      color: var(--text-color);
+      font-size: 15px;
+    }
+
+    .input-group input::placeholder {
+      color: var(--light-text);
+    }
+
+    button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.3s;
+      margin-top: 10px;
+      box-shadow: 0 4px 6px rgba(0, 137, 123, 0.3);
+    }
+
+    button:hover {
+      background: var(--primary-light);
+      box-shadow: 0 6px 8px rgba(0, 137, 123, 0.4);
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn-row button {
+      width: 50%;
+      margin-top: 0;
+    }
+
+    .btn-back {
+      background: var(--light-text);
+    }
+
+    .btn-back:hover {
+      background: #78909c;
+    }
+
+    .view-container {
+      padding: 30px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .view-container img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    .view-container p {
+      font-size: 16px;
+      margin: 10px 0;
+      padding: 8px;
+      background: var(--background-color);
+      border-radius: 8px;
+      color: var(--text-color);
+      text-align: left;
+      padding-left: 20px;
+      font-weight: 500;
+    }
+
+    .view-container button {
+      width: auto;
+      padding: 10px 20px;
+      font-weight: 500;
+      margin: 10px 8px;
+      box-shadow: none;
+    }
+
+    #editBtn {
+      background: #2196f3;
+      /* Blue */
+    }
+
+    #editBtn:hover {
+      background: #1976d2;
+    }
+
+    #deleteBtn {
+      background: #f44336;
+      /* Red */
+    }
+
+    #deleteBtn:hover {
+      background: #d32f2f;
+    }
+
+    #backBtn {
+      background: var(--light-text);
+    }
+
+    #backBtn:hover {
+      background: #78909c;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="listPage" class="page active">
+    <div class="container">
+      <div class="header">Contact List 📞</div>
+      <div class="search-bar">
+        <div class="search-input-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search contacts" id="searchInput">
+        </div>
+      </div>
+      <ul id="contactList"></ul>
+      <p id="noResult" class="no-result" style="display:none;">No contact found.</p>
+      <button id="addBtn" class="fa-solid fa-user-plus"></button>
+    </div>
+  </div>
+
+  <div id="addPage" class="page">
+    <div class="form-container">
+      <h2>Add New Contact</h2>
+      <div class="profile">
+        <img id="addPreview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+        <label class="upload-label" for="addImageInput">Upload Image</label>
+        <input type="file" id="addImageInput" accept="image/*">
+      </div>
+      <div class="input-group"><i class="fa-regular fa-user"></i><input type="text" id="addName" placeholder="Full Name"
+          required>
+      </div>
+      <div class="input-group"><i class="fa-solid fa-phone"></i><input type="tel" id="addPhone"
+          placeholder="Phone (e.g. 123-456-7890)" required
+          pattern="^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$">
+      </div>
+      <div class="input-group"><i class="fa-regular fa-envelope"></i><input type="email" id="addEmail"
+          placeholder="Email Address (e.g. user@example.com)" required></div>
+      <div class="input-group"><i class="fa-solid fa-house"></i><input type="text" id="addHome"
+          placeholder="Address (Optional)">
+      </div>
+      <button id="saveContact">Save Contact</button>
+      <button id="backToList1" class="btn-back">Cancel</button>
+    </div>
+  </div>
+
+  <div id="editPage" class="page">
+    <div class="form-container">
+      <h2>Edit Contact Details</h2>
+      <div class="profile">
+        <img id="editPreview" src="">
+        <label class="upload-label" for="editImageInput">Change Image</label>
+        <input type="file" id="editImageInput" accept="image/*">
+      </div>
+      <div class="input-group"><i class="fa-regular fa-user"></i><input type="text" id="editName"
+          placeholder="Full Name" required>
+      </div>
+      <div class="input-group"><i class="fa-solid fa-phone"></i><input type="tel" id="editPhone"
+          placeholder="Phone (e.g. 123-456-7890)" required
+          pattern="^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$">
+      </div>
+      <div class="input-group"><i class="fa-regular fa-envelope"></i><input type="email" id="editEmail"
+          placeholder="Email Address (e.g. user@example.com)" required></div>
+      <div class="input-group"><i class="fa-solid fa-house"></i><input type="text" id="editHome"
+          placeholder="Address (Optional)">
+      </div>
+      <div class="btn-row">
+        <button id="updateContact">Update</button>
+        <button id="backToList2" class="btn-back">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewPage" class="page">
+    <div class="view-container">
+      <h2 id="viewName"></h2>
+      <img id="viewPhoto" src="">
+      <p id="viewPhone"></p>
+      <p id="viewEmail"></p>
+      <p id="viewHome"></p>
+      <div class="btn-row" style="margin-top: 25px; gap: 10px;">
+        <button id="editBtn" style="width: 33%;">Edit ✏️</button>
+        <button id="deleteBtn" style="width: 33%;">Delete 🗑️</button>
+        <button id="backBtn" style="width: 33%;">Back ⬅️</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pages = {
+      list: document.getElementById("listPage"),
+      add: document.getElementById("addPage"),
+      view: document.getElementById("viewPage"),
+      edit: document.getElementById("editPage")
+    };
+
+    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+    let currentIndex = null;
+
+    const contactList = document.getElementById("contactList");
+    const searchInput = document.getElementById("searchInput");
+    const noResult = document.getElementById("noResult");
+
+
+    function showPage(name) {
+      Object.values(pages).forEach(p => p.classList.remove("active"));
+      pages[name].classList.add("active");
+      if (name === "list") {
+        searchInput.value = "";
+        renderList();
+      }
+    }
+
+    function saveContacts() {
+      localStorage.setItem("contacts", JSON.stringify(contacts));
+    }
+
+    function renderList(filter = "") {
+      contactList.innerHTML = "";
+      const filtered = contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+
+      if (filtered.length === 0 && contacts.length > 0) {
+        noResult.textContent = `No contact found for "${filter}"`;
+        noResult.style.display = "block";
+      } else if (filtered.length === 0 && contacts.length === 0) {
+        noResult.textContent = "Your contact list is empty. Add a new contact!";
+        noResult.style.display = "block";
+      }
+      else {
+        noResult.style.display = "none";
+      }
+
+      filtered.forEach((c) => {
+        const li = document.createElement("li");
+        const originalIndex = contacts.indexOf(c);
+
+        const img = document.createElement("img");
+        img.src = c.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "contact-name";
+        nameDiv.textContent = c.name;
+
+        li.appendChild(img);
+        li.appendChild(nameDiv);
+        li.onclick = () => showContact(originalIndex);
+        contactList.appendChild(li);
+      });
+    }
+
+    function showContact(i) {
+      currentIndex = i;
+      const c = contacts[i];
+
+      document.getElementById("viewName").textContent = c.name;
+      document.getElementById("viewPhoto").src = c.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      document.getElementById("viewPhone").innerHTML = `<i class="fa-solid fa-phone"></i> **Phone:** ${c.phone}`;
+      document.getElementById("viewEmail").innerHTML = `<i class="fa-regular fa-envelope"></i> **Email:** ${c.email}`;
+      document.getElementById("viewHome").innerHTML = `<i class="fa-solid fa-house"></i> **Address:** ${c.home || 'Not provided'}`;
+
+      showPage("view");
+    }
+
+    let addImageData = "";
+    const addForm = document.getElementById("addPage").querySelector(".form-container");
+    const addImageInput = document.getElementById("addImageInput");
+    const addPreview = document.getElementById("addPreview");
+
+    addImageInput.onchange = () => {
+      const file = addImageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          addImageData = e.target.result;
+          addPreview.src = addImageData;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById("saveContact").onclick = () => {
+      const nameInput = document.getElementById("addName");
+      const phoneInput = document.getElementById("addPhone");
+      const emailInput = document.getElementById("addEmail");
+
+      if (!nameInput.checkValidity() || !phoneInput.checkValidity() || !emailInput.checkValidity()) {
+        alert("Please fill out all required fields correctly.");
+        if (!nameInput.checkValidity()) nameInput.focus();
+        else if (!phoneInput.checkValidity()) phoneInput.focus();
+        else emailInput.focus();
+        return;
+      }
+
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const email = emailInput.value.trim();
+      const home = document.getElementById("addHome").value.trim();
+
+      contacts.push({ name, phone, email, home, image: addImageData });
+      saveContacts();
+      renderList();
+      showPage("list");
+
+
+      addImageData = "";
+      addPreview.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      nameInput.value = "";
+      phoneInput.value = "";
+      emailInput.value = "";
+      document.getElementById("addHome").value = "";
+    };
+
+
+    const editImageInput = document.getElementById("editImageInput");
+    let editImageData = "";
+
+    editImageInput.onchange = () => {
+      const file = editImageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          editImageData = e.target.result;
+          document.getElementById("editPreview").src = editImageData;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById("editBtn").onclick = () => {
+      const c = contacts[currentIndex];
+      document.getElementById("editName").value = c.name;
+      document.getElementById("editPhone").value = c.phone;
+      document.getElementById("editEmail").value = c.email;
+      document.getElementById("editHome").value = c.home;
+      document.getElementById("editPreview").src = c.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      editImageData = c.image;
+      editImageInput.value = '';
+      showPage("edit");
+    };
+
+    document.getElementById("updateContact").onclick = () => {
+      const nameInput = document.getElementById("editName");
+      const phoneInput = document.getElementById("editPhone");
+      const emailInput = document.getElementById("editEmail");
+
+      if (!nameInput.checkValidity() || !phoneInput.checkValidity() || !emailInput.checkValidity()) {
+        alert("Please fill out all required fields correctly.");
+        if (!nameInput.checkValidity()) nameInput.focus();
+        else if (!phoneInput.checkValidity()) phoneInput.focus();
+        else emailInput.focus();
+        return;
+      }
+
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const email = emailInput.value.trim();
+      const home = document.getElementById("editHome").value.trim();
+
+      contacts[currentIndex] = { name, phone, email, home, image: editImageData };
+      saveContacts();
+      renderList();
+      showPage("list");
+    };
+
+    document.getElementById("deleteBtn").onclick = () => {
+      if (confirm(`Are you sure you want to delete the contact for ${contacts[currentIndex].name}?`)) {
+        contacts.splice(currentIndex, 1);
+        saveContacts();
+        renderList();
+        showPage("list");
+      }
+    };
+
+    document.getElementById("addBtn").onclick = () => showPage("add");
+    document.getElementById("backToList1").onclick = () => showPage("list");
+    document.getElementById("backToList2").onclick = () => showPage("list");
+    document.getElementById("backBtn").onclick = () => showPage("list");
+
+    searchInput.oninput = e => renderList(e.target.value);
+
+    renderList();
+  </script>
+</body>
+
+</html>
